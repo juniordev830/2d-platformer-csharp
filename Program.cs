@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+
+namespace PlatformerGame
+{
+    public record Vector2D(float X, float Y);
+    public record Rect(float X, float Y, float Width, float Height);
+
+    public class Player
+    {
+        public Vector2D Position { get; private set; }
+        public Vector2D Velocity { get; private set; }
+        public bool IsGrounded { get; private set; }
+        public int Score { get; private set; }
+
+        public Player(float startX, float startY)
+        {
+            Position = new Vector2D(startX, startY);
+            Velocity = new Vector2D(0, 0);
+            IsGrounded = false;
+            Score = 0;
+        }
+
+        public void Jump()
+        {
+            if (IsGrounded)
+            {
+                Velocity = new Vector2D(Velocity.X, -12.0f);
+                IsGrounded = false;
+            }
+        }
+
+        public void ApplyGravity(float delta)
+        {
+            float newY = Position.Y + Velocity.Y * delta;
+            float newVy = Velocity.Y + 9.8f * delta;
+            
+            // Ground collision
+            if (newY >= 300.0f)
+            {
+                newY = 300.0f;
+                newVy = 0.0f;
+                IsGrounded = true;
+            }
+
+            Position = new Vector2D(Position.X, newY);
+            Velocity = new Vector2D(Velocity.X, newVy);
+        }
+
+        public void AddScore(int points) => Score += points;
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("🎮 2D Platformer C# Engine starting...");
+            var player = new Player(100, 200);
+
+            Console.WriteLine($"Initial Position: ({player.Position.X}, {player.Position.Y})");
+            
+            // Simulate 5 frames
+            for (int frame = 1; frame <= 5; frame++)
+            {
+                if (frame == 1) player.Jump();
+                player.ApplyGravity(0.1f);
+                Console.WriteLine($"Frame {frame}: Player Y = {player.Position.Y:F2}, Grounded = {player.IsGrounded}");
+            }
+        }
+    }
+}

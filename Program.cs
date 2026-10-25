@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace PlatformerGame
 {
-    public record Vector2D(float X, float Y);
-    public record Rect(float X, float Y, float Width, float Height);
+    // Optimized: Converted from record class to readonly record struct to eliminate heap allocations
+    // during frequent physics/position updates in the game loop, reducing GC pressure.
+    public readonly record struct Vector2D(float X, float Y);
+    public readonly record struct Rect(float X, float Y, float Width, float Height);
 
     public class Player
     {

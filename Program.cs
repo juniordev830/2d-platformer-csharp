@@ -1,12 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace PlatformerGame
 {
-    // Optimized: Converted from record class to readonly record struct to eliminate heap allocations
-    // during frequent physics/position updates in the game loop, reducing GC pressure.
-    public readonly record struct Vector2D(float X, float Y);
-    public readonly record struct Rect(float X, float Y, float Width, float Height);
+    // Optimized: Added operator overloading and AggressiveInlining with 'in' parameters for zero-copy high-frequency math operations.
+    public readonly record struct Vector2D(float X, float Y)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D operator +(in Vector2D a, in Vector2D b) => new(a.X + b.X, a.Y + b.Y);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D operator -(in Vector2D a, in Vector2D b) => new(a.X - b.X, a.Y - b.Y);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D operator *(in Vector2D v, float scalar) => new(v.X * scalar, v.Y * scalar);
+    }
+
+    // Optimized: Added zero-allocation AABB collision detection with AggressiveInlining and 'in' parameter to avoid copying 16-byte structs.
+    public readonly record struct Rect(float X, float Y, float Width, float Height)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly bool Intersects(in Rect other)
+        {
+            return X < other.X + other.Width &&
+                   X + Width > other.X &&
+                   Y < other.Y + other.Height &&
+                   Y + Height > other.Y;
+        }
+    }
 
     public class Player
     {
@@ -23,6 +45,7 @@ namespace PlatformerGame
             Score = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Jump()
         {
             if (IsGrounded)
@@ -32,20 +55,21 @@ namespace PlatformerGame
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ApplyGravity(float delta)
         {
-            float newY = Position.Y + Velocity.Y * delta;
+            Vector2D newPos = Position + Velocity * delta;
             float newVy = Velocity.Y + 9.8f * delta;
             
             // Ground collision
-            if (newY >= 300.0f)
+            if (newPos.Y >= 300.0f)
             {
-                newY = 300.0f;
+                newPos = new Vector2D(newPos.X, 300.0f);
                 newVy = 0.0f;
                 IsGrounded = true;
             }
 
-            Position = new Vector2D(Position.X, newY);
+            Position = newPos;
             Velocity = new Vector2D(Velocity.X, newVy);
         }
 
@@ -68,6 +92,11 @@ namespace PlatformerGame
                 player.ApplyGravity(0.1f);
                 Console.WriteLine($"Frame {frame}: Player Y = {player.Position.Y:F2}, Grounded = {player.IsGrounded}");
             }
+
+            // Demonstrate optimized AABB collision check
+            var platform = new Rect(90, 290, 100, 20);
+            var playerBounds = new Rect(player.Position.X, player.Position.Y, 16, 32);
+            Console.WriteLine($"Collision with platform: {playerBounds.Intersects(platform)}");
         }
     }
 }

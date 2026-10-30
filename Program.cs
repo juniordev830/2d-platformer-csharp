@@ -1,12 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace PlatformerGame
 {
     // Optimized: Converted from record class to readonly record struct to eliminate heap allocations
     // during frequent physics/position updates in the game loop, reducing GC pressure.
-    public readonly record struct Vector2D(float X, float Y);
-    public readonly record struct Rect(float X, float Y, float Width, float Height);
+    public readonly record struct Vector2D(float X, float Y)
+    {
+        // Optimized: Inlined vector addition passing by readonly reference (`in`) to avoid struct copying overhead.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D operator +(in Vector2D a, in Vector2D b) => new(a.X + b.X, a.Y + b.Y);
+
+        // Optimized: Inlined vector scalar multiplication passing by readonly reference (`in`) to avoid struct copying overhead.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2D operator *(in Vector2D v, float scalar) => new(v.X * scalar, v.Y * scalar);
+    }
+
+    public readonly record struct Rect(float X, float Y, float Width, float Height)
+    {
+        // Optimized: Uses `in` parameter passing (by readonly reference) to prevent 16-byte struct copy overhead
+        // during high-frequency AABB collision checks in the game loop. AggressiveInlining eliminates method call overhead.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Intersects(in Rect other)
+        {
+            return X < other.X + other.Width &&
+                   X + Width > other.X &&
+                   Y < other.Y + other.Height &&
+                   Y + Height > other.Y;
+        }
+    }
 
     public class Player
     {

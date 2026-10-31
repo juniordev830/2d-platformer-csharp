@@ -33,11 +33,26 @@ namespace PlatformerGame
 
     public class Player
     {
-        public Vector2D Position { get; private set; }
+        private Vector2D _position;
+        private Rect _boundingBox;
+
+        // Optimized: Update cached bounding box when Position changes rather than allocating/recalculating on every query.
+        public Vector2D Position
+        {
+            get => _position;
+            private set
+            {
+                _position = value;
+                _boundingBox = new Rect(value.X, value.Y, 16.0f, 32.0f);
+            }
+        }
+
         public Vector2D Velocity { get; private set; }
         public bool IsGrounded { get; private set; }
         public int Score { get; private set; }
-        public Rect BoundingBox => new(Position.X, Position.Y, 16.0f, 32.0f);
+
+        // Optimized: Return ref readonly to avoid 16-byte struct copy and redundant struct instantiation during collision detection loops.
+        public ref readonly Rect BoundingBox => ref _boundingBox;
 
         public Player(float startX, float startY)
         {

@@ -37,12 +37,21 @@ namespace PlatformerGame.Tests
         {
             var player = new Player(10f, 20f);
 
-            player.Jump();
-            Assert.Equal(0f, player.Velocity.Y);
-
-            // A new player starts airborne; gravity should accelerate it downward.
             player.ApplyGravity(0.1f);
             Assert.True(player.Velocity.Y > 0f);
+
+            var platform = new Rect(-10f, 50f, 100f, 20f);
+            for (var i = 0; i < 10 && !player.IsGrounded; i++)
+            {
+                var previousBottom = player.BoundingBox.Bottom;
+                player.ApplyGravity(0.1f);
+                player.TryLandOn(in platform, previousBottom);
+            }
+
+            Assert.True(player.IsGrounded);
+            player.Jump();
+            Assert.True(player.Velocity.Y < 0f);
+            Assert.False(player.IsGrounded);
         }
 
         [Fact]

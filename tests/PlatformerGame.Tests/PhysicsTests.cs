@@ -40,7 +40,7 @@ namespace PlatformerGame.Tests
             player.ApplyGravity(0.1f);
             Assert.True(player.Velocity.Y > 0f);
 
-            var platform = new Rect(-10f, 50f, 100f, 20f);
+            var platform = new Rect(-10f, 80f, 100f, 20f);
             for (var i = 0; i < 10 && !player.IsGrounded; i++)
             {
                 var previousBottom = player.BoundingBox.Bottom;

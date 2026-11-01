@@ -55,8 +55,8 @@ dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj
 ## Limitações conhecidas
 
 - O código é voltado para protótipo e não para produto de alto porte.
-- Não há pipeline de CI ou análise estática configurada no contexto atual.
-- A cobertura automatizada era inexistente antes desta revisão.
+- O workflow de CI executa build e testes em pushes e pull requests.
+- A suíte de testes cobre vetores, colisões AABB, validação de dimensões, gravidade, aterrissagem e salto.
 - O uso de `float` é adequado ao protótipo, mas pode exigir validações adicionais em cenários mais exigentes.
 
 ## Próxima evolução recomendada

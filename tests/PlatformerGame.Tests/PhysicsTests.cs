@@ -1,0 +1,56 @@
+using System;
+using PlatformerGame;
+using Xunit;
+
+namespace PlatformerGame.Tests
+{
+    public class PhysicsTests
+    {
+        [Fact]
+        public void VectorAdditionAndMagnitudeAreCorrect()
+        {
+            var vector = new Vector2D(3f, 4f) + new Vector2D(1f, 2f);
+
+            Assert.Equal(new Vector2D(4f, 6f), vector);
+            Assert.Equal(MathF.Sqrt(52f), vector.Magnitude, 4);
+        }
+
+        [Fact]
+        public void RectanglesIntersectOnlyWhenTheirAreasOverlap()
+        {
+            var first = new Rect(0f, 0f, 10f, 10f);
+            var overlapping = new Rect(9f, 9f, 5f, 5f);
+            var touching = new Rect(10f, 0f, 5f, 5f);
+
+            Assert.True(first.Intersects(in overlapping));
+            Assert.False(first.Intersects(in touching));
+        }
+
+        [Fact]
+        public void RectangleRejectsNegativeDimensions()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Rect(0f, 0f, -1f, 10f));
+        }
+
+        [Fact]
+        public void JumpAppliesUpwardVelocityAndGravityChangesIt()
+        {
+            var player = new Player(10f, 20f);
+
+            player.Jump();
+            Assert.Equal(0f, player.Velocity.Y);
+
+            // A new player starts airborne; gravity should accelerate it downward.
+            player.ApplyGravity(0.1f);
+            Assert.True(player.Velocity.Y > 0f);
+        }
+
+        [Fact]
+        public void NegativeDeltaTimeIsRejected()
+        {
+            var player = new Player(0f, 0f);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => player.ApplyGravity(-0.1f));
+        }
+    }
+}

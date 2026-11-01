@@ -80,5 +80,24 @@ namespace PlatformerGame.Tests
                 new Rect(float.MaxValue, 0f, float.MaxValue, 1f));
         }
 
+        [Fact]
+        public void BoundingBoxReflectsPositionUpdates()
+        {
+            var player = new Player(10f, 20f);
+            Assert.Equal(10f, player.BoundingBox.X);
+            Assert.Equal(20f, player.BoundingBox.Y);
+
+            player.ApplyGravity(0.1f);
+            Assert.Equal(player.Position.X, player.BoundingBox.X);
+            Assert.Equal(player.Position.Y, player.BoundingBox.Y);
+
+            var platform = new Rect(0f, 50f, 100f, 20f);
+            var previousBottom = player.BoundingBox.Bottom;
+            player.ApplyGravity(0.1f);
+            player.TryLandOn(in platform, previousBottom);
+
+            Assert.Equal(player.Position.X, player.BoundingBox.X);
+            Assert.Equal(player.Position.Y, player.BoundingBox.Y);
+        }
     }
 }

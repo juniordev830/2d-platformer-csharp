@@ -3,11 +3,8 @@ using System.Collections.Generic;
 
 namespace PlatformerGame
 {
-    // Optimized: Converted from record class to readonly record struct to eliminate heap allocations
-    // during frequent physics/position updates in the game loop, reducing GC pressure.
     public readonly record struct Vector2D(float X, float Y)
     {
-        // Optimized: 'in' parameters pass struct by readonly reference, avoiding stack copy overhead in hot loops.
         public static Vector2D operator +(in Vector2D a, in Vector2D b) => new(a.X + b.X, a.Y + b.Y);
         public static Vector2D operator *(in Vector2D a, float scalar) => new(a.X * scalar, a.Y * scalar);
         public static Vector2D operator *(float scalar, in Vector2D a) => new(a.X * scalar, a.Y * scalar);
@@ -15,7 +12,6 @@ namespace PlatformerGame
 
     public readonly record struct Rect(float X, float Y, float Width, float Height)
     {
-        // High-performance AABB intersection test using 'in' parameters to avoid 16-byte struct copy overhead in hot collision loops
         public bool Intersects(in Rect other)
         {
             return X < other.X + other.Width &&
@@ -53,11 +49,11 @@ namespace PlatformerGame
 
         public Player(float startX, float startY)
         {
-            Position = new Vector2D(startX, startY);
+            _position = new Vector2D(startX, startY);
+            _boundingBox = new Rect(_position.X, _position.Y, 16.0f, 32.0f);
             Velocity = new Vector2D(0, 0);
             IsGrounded = false;
             Score = 0;
-            _boundingBox = new Rect(Position.X, Position.Y, 16.0f, 32.0f);
         }
 
         public void Jump()
@@ -74,7 +70,6 @@ namespace PlatformerGame
             Position += Velocity * delta;
             Velocity += new Vector2D(0, 9.8f * delta);
 
-            // Ground collision
             if (Position.Y >= 300.0f)
             {
                 Position = new Vector2D(Position.X, 300.0f);
@@ -86,9 +81,9 @@ namespace PlatformerGame
         public void AddScore(int points) => Score += points;
     }
 
-    class Program
+    public static class GameSimulation
     {
-        static void Main(string[] args)
+        public static void Run()
         {
             Console.WriteLine("🎮 2D Platformer C# Engine starting...");
             var player = new Player(100, 200);
@@ -97,7 +92,6 @@ namespace PlatformerGame
 
             var platform = new Rect(80, 280, 100, 20);
 
-            // Simulate 5 frames
             for (int frame = 1; frame <= 5; frame++)
             {
                 if (frame == 1) player.Jump();
@@ -105,6 +99,14 @@ namespace PlatformerGame
                 bool colliding = player.BoundingBox.Intersects(in platform);
                 Console.WriteLine($"Frame {frame}: Player Y = {player.Position.Y:F2}, Grounded = {player.IsGrounded}, Platform Collision = {colliding}");
             }
+        }
+    }
+
+    internal static class Program
+    {
+        private static void Main(string[] args)
+        {
+            GameSimulation.Run();
         }
     }
 }

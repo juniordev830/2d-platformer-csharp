@@ -6,25 +6,27 @@ namespace PlatformerGame
     {
         public static void Run()
         {
-            Console.WriteLine("🎮 2D Platformer C# Engine starting...");
+            Console.WriteLine("2D Platformer C# simulation starting...");
 
             var player = new Player(100f, 200f);
-            Console.WriteLine($"Initial Position: ({player.Position.X}, {player.Position.Y})");
-
             var platform = new Rect(80f, 280f, 100f, 20f);
 
-            for (int frame = 1; frame <= 5; frame++)
+            Console.WriteLine($"Initial Position: ({player.Position.X:F2}, {player.Position.Y:F2})");
+
+            for (int frame = 1; frame <= 8; frame++)
             {
-                if (frame == 1)
+                if (frame == 4)
                 {
                     player.Jump();
                 }
 
+                var previousBottom = player.BoundingBox.Bottom;
                 player.ApplyGravity(0.1f);
+                var landed = player.TryLandOn(in platform, previousBottom);
 
-                bool colliding = player.BoundingBox.Intersects(in platform);
                 Console.WriteLine(
-                    $"Frame {frame}: Player Y = {player.Position.Y:F2}, Grounded = {player.IsGrounded}, Platform Collision = {colliding}");
+                    $"Frame {frame}: Position=({player.Position.X:F2}, {player.Position.Y:F2}), " +
+                    $"VerticalVelocity={player.Velocity.Y:F2}, Grounded={player.IsGrounded}, Landed={landed}");
             }
         }
     }

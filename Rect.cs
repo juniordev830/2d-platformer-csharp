@@ -22,6 +22,10 @@ namespace PlatformerGame
 
             if (width < 0f) throw new ArgumentOutOfRangeException(nameof(width), "Width cannot be negative.");
             if (height < 0f) throw new ArgumentOutOfRangeException(nameof(height), "Height cannot be negative.");
+            if (!float.IsFinite(x + width) || !float.IsFinite(y + height))
+            {
+                throw new ArgumentOutOfRangeException(nameof(width), "Rectangle bounds must remain finite.");
+            }
 
             X = x;
             Y = y;

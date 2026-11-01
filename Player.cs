@@ -39,8 +39,15 @@ namespace PlatformerGame
 
             if (deltaTime == 0f) return;
 
-            Velocity = new Vector2D(Velocity.X, Velocity.Y + Gravity * deltaTime);
-            Position += Velocity * deltaTime;
+            var nextVelocityY = Velocity.Y + Gravity * deltaTime;
+            var nextY = Position.Y + nextVelocityY * deltaTime;
+            if (!float.IsFinite(nextVelocityY) || !float.IsFinite(nextY))
+            {
+                throw new OverflowException("Physics update produced a non-finite player state.");
+            }
+
+            Velocity = new Vector2D(Velocity.X, nextVelocityY);
+            Position = new Vector2D(Position.X, nextY);
         }
 
         /// <summary>Resolve a landing on a platform when the player's feet cross its top.</summary>

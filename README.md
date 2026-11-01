@@ -17,7 +17,11 @@ Este repositório contém um protótipo de engine 2D com física básica, gravid
 
 ## Estrutura do projeto
 
-- `Program.cs` — tipos matemáticos, lógica do jogo e simulação do loop principal
+- `Program.cs` — entrada da aplicação
+- `GameSimulation.cs` — loop principal da simulação
+- `Player.cs` — lógica do player
+- `Vector2D.cs` — tipo matemático de vetor
+- `Rect.cs` — tipo de colisão
 - `PlatformerGame.csproj` — configuração do projeto .NET
 - `.gitignore` — arquivos locais gerados pelo ambiente e IDE
 - `README.md` — documentação do projeto
@@ -46,7 +50,7 @@ dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj
 
 - O projeto não expõe autenticação, APIs HTTP, banco de dados, credenciais ou serviços externos.
 - Não há dados sensíveis ou segredos de produção no contexto atual.
-- A lógica do jogo está concentrada em um único arquivo, o que facilita leitura e estudo, mas reduz modularização.
+- A lógica do jogo está dividida em componentes menores, melhorando leitura e manutenção.
 
 ## Limitações conhecidas
 
@@ -57,4 +61,4 @@ dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj
 
 ## Próxima evolução recomendada
 
-A próxima etapa mais útil é separar a lógica em componentes menores e manter a suíte de testes automatizados para regressões de comportamento e desempenho.
+A próxima etapa mais útil é manter a suíte de testes automatizados para regressões de comportamento e desempenho.

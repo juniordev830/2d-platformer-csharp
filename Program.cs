@@ -33,11 +33,23 @@ namespace PlatformerGame
 
     public class Player
     {
-        public Vector2D Position { get; private set; }
+        private Vector2D _position;
+        private Rect _boundingBox;
+
+        public Vector2D Position
+        {
+            get => _position;
+            private set
+            {
+                _position = value;
+                _boundingBox = new Rect(_position.X, _position.Y, 16.0f, 32.0f);
+            }
+        }
+
         public Vector2D Velocity { get; private set; }
         public bool IsGrounded { get; private set; }
         public int Score { get; private set; }
-        public Rect BoundingBox => new(Position.X, Position.Y, 16.0f, 32.0f);
+        public ref readonly Rect BoundingBox => ref _boundingBox;
 
         public Player(float startX, float startY)
         {
@@ -45,6 +57,7 @@ namespace PlatformerGame
             Velocity = new Vector2D(0, 0);
             IsGrounded = false;
             Score = 0;
+            _boundingBox = new Rect(Position.X, Position.Y, 16.0f, 32.0f);
         }
 
         public void Jump()
@@ -60,7 +73,7 @@ namespace PlatformerGame
         {
             Position += Velocity * delta;
             Velocity += new Vector2D(0, 9.8f * delta);
-            
+
             // Ground collision
             if (Position.Y >= 300.0f)
             {
@@ -83,7 +96,7 @@ namespace PlatformerGame
             Console.WriteLine($"Initial Position: ({player.Position.X}, {player.Position.Y})");
 
             var platform = new Rect(80, 280, 100, 20);
-            
+
             // Simulate 5 frames
             for (int frame = 1; frame <= 5; frame++)
             {

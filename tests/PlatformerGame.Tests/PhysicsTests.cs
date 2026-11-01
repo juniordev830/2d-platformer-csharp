@@ -61,5 +61,24 @@ namespace PlatformerGame.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() => player.ApplyGravity(-0.1f));
         }
+        [Fact]
+        public void PhysicsOverflowIsRejectedWithoutMutatingPlayerState()
+        {
+            var player = new Player(1f, 2f);
+            var originalPosition = player.Position;
+            var originalVelocity = player.Velocity;
+
+            Assert.Throws<OverflowException>(() => player.ApplyGravity(float.MaxValue));
+            Assert.Equal(originalPosition, player.Position);
+            Assert.Equal(originalVelocity, player.Velocity);
+        }
+
+        [Fact]
+        public void RectangleRejectsOverflowingBounds()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new Rect(float.MaxValue, 0f, float.MaxValue, 1f));
+        }
+
     }
 }

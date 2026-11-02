@@ -33,6 +33,25 @@ namespace PlatformerGame
             Height = height;
         }
 
+        /// <summary>
+        /// Internal constructor to skip repeated validation checks in hot paths where coordinates
+        /// and dimensions are already verified to be valid and finite.
+        /// </summary>
+        internal Rect(float x, float y, float width, float height, bool uncheckedBounds)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+        }
+
+        /// <summary>
+        /// Creates a rectangle without validation for performance-critical inner simulation loops
+        /// where dimensions and positions are known to be finite and valid.
+        /// </summary>
+        internal static Rect CreateUnchecked(float x, float y, float width, float height) =>
+            new(x, y, width, height, uncheckedBounds: true);
+
         /// <summary>Returns true only when the rectangles overlap with positive area.</summary>
         public bool Intersects(in Rect other) =>
             X < other.Right &&

@@ -7,6 +7,14 @@ namespace PlatformerGame.Tests
     public class PhysicsTests
     {
         [Fact]
+        public void LargeFiniteVectorsNormalizeWithoutOverflow()
+        {
+            var unit = new Vector2D(float.MaxValue, float.MaxValue).Normalize();
+            Assert.InRange(unit.X, 0.7070f, 0.7072f);
+            Assert.InRange(unit.Y, 0.7070f, 0.7072f);
+            Assert.True(float.IsFinite(new Vector2D(1e20f, 1e20f).Magnitude));
+        }
+        [Fact]
         public void VectorAdditionAndMagnitudeAreCorrect()
         {
             var vector = new Vector2D(3f, 4f) + new Vector2D(1f, 2f);

@@ -7,7 +7,7 @@ namespace PlatformerGame
     {
         public static Vector2D Zero => new(0f, 0f);
 
-        public float Magnitude => MathF.Sqrt((X * X) + (Y * Y));
+        public float Magnitude => (float)Math.Sqrt(((double)X * X) + ((double)Y * Y));
 
         public static Vector2D operator +(Vector2D left, Vector2D right) =>
             new(left.X + right.X, left.Y + right.Y);
@@ -20,8 +20,8 @@ namespace PlatformerGame
 
         public Vector2D Normalize()
         {
-            var magnitude = Magnitude;
-            return magnitude > 0f ? new Vector2D(X / magnitude, Y / magnitude) : Zero;
+            var magnitude = Math.Sqrt(((double)X * X) + ((double)Y * Y));
+            return magnitude > 0d ? new Vector2D((float)(X / magnitude), (float)(Y / magnitude)) : Zero;
         }
     }
 }

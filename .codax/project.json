@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "project_kind": "Simulador de plataforma 2D C#",
+  "entry_points": [
+    "Player.cs",
+    "GameSimulation.cs",
+    "Rect.cs"
+  ],
+  "test_commands": [
+    "dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj --configuration Release"
+  ],
+  "review_focus": [
+    "Colisão, gravidade, salto e limites de movimento",
+    "Números não finitos e integração de física"
+  ]
+}

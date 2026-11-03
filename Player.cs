@@ -54,7 +54,9 @@ namespace PlatformerGame
 
             Velocity = new Vector2D(Velocity.X, nextVelocityY);
             Position = new Vector2D(Position.X, nextY);
-            _boundingBox = new Rect(Position.X, Position.Y, Width, Height);
+            // Use CreateUnchecked since nextY/Position.X are validated finite and Width/Height are positive constants.
+            // Eliminates 8 redundant float validations on every physics step.
+            _boundingBox = Rect.CreateUnchecked(Position.X, Position.Y, Width, Height);
         }
 
         /// <summary>Resolve a landing on a platform when the player's feet cross its top.</summary>
@@ -72,7 +74,8 @@ namespace PlatformerGame
 
             Position = new Vector2D(Position.X, platform.Y - Height);
             Velocity = new Vector2D(Velocity.X, 0f);
-            _boundingBox = new Rect(Position.X, Position.Y, Width, Height);
+            // Use CreateUnchecked since platform bounds and player coordinates are already finite and valid.
+            _boundingBox = Rect.CreateUnchecked(Position.X, Position.Y, Width, Height);
             IsGrounded = true;
             return true;
         }

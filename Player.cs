@@ -36,6 +36,24 @@ namespace PlatformerGame
             IsGrounded = false;
         }
 
+        public void MoveHorizontal(float input, float deltaTime)
+        {
+            if (!float.IsFinite(input) || !float.IsFinite(deltaTime) || deltaTime < 0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(deltaTime), "Input and delta time must be finite; delta time cannot be negative.");
+            }
+
+            var direction = Math.Clamp(input, -1f, 1f);
+            var nextX = Position.X + direction * 240f * deltaTime;
+            if (!float.IsFinite(nextX))
+            {
+                throw new OverflowException("Horizontal movement produced a non-finite player state.");
+            }
+
+            Position = new Vector2D(nextX, Position.Y);
+            _boundingBox = Rect.CreateUnchecked(Position.X, Position.Y, Width, Height);
+        }
+
         public void ApplyGravity(float deltaTime)
         {
             if (!float.IsFinite(deltaTime) || deltaTime < 0f)

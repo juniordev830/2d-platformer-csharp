@@ -63,6 +63,27 @@ namespace PlatformerGame.Tests
         }
 
         [Fact]
+        public void HorizontalMovementClampsInputAndKeepsBoundingBoxInSync()
+        {
+            var player = new Player(10f, 20f);
+
+            player.MoveHorizontal(2f, 0.5f);
+            Assert.Equal(130f, player.Position.X);
+            Assert.Equal(player.Position.X, player.BoundingBox.X);
+
+            player.MoveHorizontal(-2f, 0.25f);
+            Assert.Equal(70f, player.Position.X);
+        }
+
+        [Fact]
+        public void HorizontalMovementRejectsInvalidDeltaTime()
+        {
+            var player = new Player(0f, 0f);
+            Assert.Throws<ArgumentOutOfRangeException>(() => player.MoveHorizontal(1f, -0.1f));
+            Assert.Throws<ArgumentOutOfRangeException>(() => player.MoveHorizontal(float.NaN, 0.1f));
+        }
+
+        [Fact]
         public void NegativeDeltaTimeIsRejected()
         {
             var player = new Player(0f, 0f);

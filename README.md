@@ -62,3 +62,7 @@ dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj
 ## Próxima evolução recomendada
 
 A próxima etapa mais útil é manter a suíte de testes automatizados para regressões de comportamento e desempenho.
+
+## Validação e manutenção
+
+Consulte o [guia técnico de validação](docs/GUIA_DE_VALIDACAO.md) antes de alterar o código: ele reúne os comandos, casos de regressão e limites atuais do projeto.

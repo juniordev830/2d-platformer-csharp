@@ -63,7 +63,6 @@ dotnet test tests/PlatformerGame.Tests/PlatformerGame.Tests.csproj
 
 A próxima etapa mais útil é manter a suíte de testes automatizados para regressões de comportamento e desempenho.
 
-
 ## Resposta de salto com buffer de entrada
 
 O protótipo agora mantém por até **0,12 segundo** um comando de salto feito quando o personagem ainda está no ar. Se ele aterrissar dentro desse intervalo, o salto é disparado automaticamente a partir da superfície da plataforma. Isso facilita comandos feitos momentos antes do contato.
@@ -71,3 +70,7 @@ O protótipo agora mantém por até **0,12 segundo** um comando de salto feito q
 A regra foi incluída em `Player.cs`, com testes xUnit em `JumpBufferTests.cs` cobrindo salto imediato, janela válida, expiração, atualização de tempo zero, estados inválidos e preservação do estado se houver overflow da física. A velocidade e a gravidade originais não foram alteradas.
 
 **Limite:** trata-se de *jump buffering*, não de *coyote time* (saltar após sair da borda). O jogo segue como simulação de console, sem renderização interativa ou controles completos de plataforma.
+
+## Validação e manutenção
+
+Consulte o [guia técnico de validação](docs/GUIA_DE_VALIDACAO.md) antes de alterar o código: ele reúne os comandos, casos de regressão e limites atuais do projeto.

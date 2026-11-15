@@ -7,14 +7,17 @@ namespace PlatformerGame
     {
         private const float Gravity = 980f;
         private const float JumpVelocity = 360f;
+        private const float JumpBufferDuration = 0.12f;
         private const float Width = 20f;
         private const float Height = 30f;
 
         private Rect _boundingBox;
+        private float _jumpBufferRemaining;
 
         public Vector2D Position { get; private set; }
         public Vector2D Velocity { get; private set; }
         public bool IsGrounded { get; private set; }
+        public bool HasBufferedJump => _jumpBufferRemaining > 0f;
 
         // Cache the bounding box and return by readonly reference to avoid redundant Rect construction
         // and validation overhead on every collision and physics check in the hot path.
@@ -29,9 +32,18 @@ namespace PlatformerGame
             _boundingBox = new Rect(x, y, Width, Height);
         }
 
+        /// <summary>
+        /// Jumps immediately from a platform. When airborne, buffers the request
+        /// briefly so pressing Jump just before landing still triggers a jump.
+        /// </summary>
         public void Jump()
         {
-            if (!IsGrounded) return;
+            if (!IsGrounded)
+            {
+                _jumpBufferRemaining = JumpBufferDuration;
+                return;
+            }
+            _jumpBufferRemaining = 0f;
             Velocity = new Vector2D(Velocity.X, -JumpVelocity);
             IsGrounded = false;
         }
@@ -70,6 +82,9 @@ namespace PlatformerGame
                 throw new OverflowException("Physics update produced a non-finite player state.");
             }
 
+            // Consume the buffer only after physics has passed its overflow
+            // checks; a rejected frame must not change the player state.
+            _jumpBufferRemaining = MathF.Max(0f, _jumpBufferRemaining - deltaTime);
             Velocity = new Vector2D(Velocity.X, nextVelocityY);
             Position = new Vector2D(Position.X, nextY);
             // Use CreateUnchecked since nextY/Position.X are validated finite and Width/Height are positive constants.
@@ -95,6 +110,12 @@ namespace PlatformerGame
             // Use CreateUnchecked since platform bounds and player coordinates are already finite and valid.
             _boundingBox = Rect.CreateUnchecked(Position.X, Position.Y, Width, Height);
             IsGrounded = true;
+            if (_jumpBufferRemaining > 0f)
+            {
+                // Landing resolves the pending input exactly once, from the
+                // platform's top (avoids teleporting below the surface).
+                Jump();
+            }
             return true;
         }
     }

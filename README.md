@@ -1,5 +1,7 @@
 # 2D Platformer C#
 
+**Navegação** · [Visão geral](#visão-geral) · [Tecnologias e arquitetura](#tecnologias-e-arquitetura) · [Estrutura do projeto](#estrutura-do-projeto) · [Código e estudo](docs/ENGENHARIA_REVERSA.md)
+
 ## Visão geral
 
 Este repositório contém um protótipo de engine 2D com física básica, gravidade, salto e detecção de colisão por bounding box (AABB). O projeto foi implementado em C# com .NET 8 e serve como estudo de mecânica de jogo, otimização de hot path e lógica de colisão.
@@ -74,3 +76,9 @@ A regra foi incluída em `Player.cs`, com testes xUnit em `JumpBufferTests.cs` c
 ## Validação e manutenção
 
 Consulte o [guia técnico de validação](docs/GUIA_DE_VALIDACAO.md) antes de alterar o código: ele reúne os comandos, casos de regressão e limites atuais do projeto.
+
+## Código e roteiro de estudo
+
+Como separaria um erro de integração de movimento de um erro no teste de colisão? O [guia de engenharia reversa](docs/ENGENHARIA_REVERSA.md) reúne o mapa dos módulos e uma pergunta técnica baseada no projeto.
+
+Mantido por [João Junior](https://github.com/juniordev830).
